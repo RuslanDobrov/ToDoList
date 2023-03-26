@@ -19,6 +19,22 @@ public class Tag {
     @ManyToMany(mappedBy = "tagList")
     private Set<Todo> todoList = new HashSet<>();
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public Set<Todo> getTodoList() {
         return todoList;
     }

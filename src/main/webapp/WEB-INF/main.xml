@@ -4,19 +4,25 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context
        https://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/mvc
-       https://www.springframework.org/schema/mvc/spring-mvc.xsd">
+       https://www.springframework.org/schema/mvc/spring-mvc.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd">
 
     <context:component-scan base-package="todolist"/>
     <mvc:annotation-driven/>
+    <tx:annotation-driven transaction-manager="transactionManager"/>
 
-    <bean id="dataSource" class="org.springframework.jdbc.datasource.SingleConnectionDataSource">
-        <property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
-        <property name="url" value="jdbc:sqlserver://localhost:1433;encrypt=false;integratedSecurity=false;database=ToDoListDB"/>
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"/>
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+        <property name="driverClass" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
+        <property name="url" value="jdbc:sqlserver://localhost:1433;encrypt=false;integratedSecurity=false;trustServerCertificate=false;database=ToDoListDB"/>
         <property name="username" value="root"/>
         <property name="password" value="root"/>
     </bean>
