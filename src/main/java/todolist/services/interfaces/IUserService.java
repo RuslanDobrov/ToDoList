@@ -1,11 +1,14 @@
 package todolist.services.interfaces;
 
+import todolist.domain.PlainObjects.UserPojo;
 import todolist.domain.User;
 
+import java.util.List;
+
 public interface IUserService {
-    int createUser(User user);
-    User getUser(long id);
-    int updateUser(User user, long id);
-    int deleteUser(long id);
-    void createTableUser();
+    UserPojo createUser(User user);
+    UserPojo getUser(long id);
+    List<UserPojo> getAllUsers();
+    UserPojo updateUser(User user, long id);
+    UserPojo deleteUser(long id);
 }

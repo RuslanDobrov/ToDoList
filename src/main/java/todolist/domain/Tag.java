@@ -6,21 +6,18 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "_USER")
-public class User {
+@Table(name = "TAG")
 
+public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ID")
     private Long id;
 
-    @Column(name = "EMAIL", unique = true, nullable = false)
-    private String email;
+    @Column(name = "NAME", nullable = false)
+    private String name;
 
-    @Column(name = "PASSWORD", nullable = false)
-    private String password;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "tagList")
     private Set<Todo> todoList = new HashSet<>();
 
     public Long getId() {
@@ -31,20 +28,12 @@ public class User {
         this.id = id;
     }
 
-    public String getEmail() {
-        return email;
+    public String getName() {
+        return name;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Set<Todo> getTodoList() {
@@ -60,7 +49,7 @@ public class User {
         if(otherSideHasBeenSet) {
             return;
         }
-        todo.setUser(this, true);
+        todo.addTag(this, true);
     }
 
     public void removeTodo(Todo todo) {
@@ -72,30 +61,19 @@ public class User {
         if(otherSideHasBeenSet) {
             return;
         }
-        todo.removeUser(this, true);
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                '}';
+        todo.removeTag(this, true);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof User)) return false;
-        User user = (User) o;
-        return id.equals(user.id) &&
-                email.equals(user.email) &&
-                password.equals(user.password);
+        if (!(o instanceof Tag)) return false;
+        Tag tag = (Tag) o;
+        return id.equals(tag.id) && name.equals(tag.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, email, password);
+        return Objects.hash(id, name);
     }
 }

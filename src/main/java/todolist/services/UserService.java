@@ -1,50 +1,64 @@
 package todolist.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import todolist.domain.PlainObjects.UserPojo;
 import todolist.domain.User;
 import todolist.services.interfaces.IUserService;
+import todolist.utils.Converter;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService implements IUserService {
 
-    private final JdbcTemplate jdbcTemplate;
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    private final Converter converter;
 
     @Autowired
-    public UserService(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    public UserService(Converter converter) {
+        this.converter = converter;
     }
 
     @Override
-    public int createUser(User user) {
-        String query = "INSERT INTO dbo.Users VALUES(" + user.getId() + ",'" + user.getEmail() + "','" + user.getPassword() + "')";
-        return jdbcTemplate.update(query);
+    @Transactional
+    public UserPojo createUser(User user) {
+        entityManager.persist(user);
+        return converter.userToPojo(user);
     }
 
     @Override
-    public User getUser(long id) {
-        String query = "SELECT * FROM dbo.Users WHERE Users.Id = ?";
-        return jdbcTemplate.queryForObject(query, new BeanPropertyRowMapper<>(User.class), id);
+    @Transactional(readOnly = true)
+    public UserPojo getUser(long id) {
+        User foundUser = entityManager
+                .createQuery("SELECT user FROM User user WHERE user.id = :id ", User.class)
+                .setParameter("id", id)
+                .getSingleResult();
+        return converter.userToPojo(foundUser);
     }
 
     @Override
-    public int updateUser(User updateUser, long id) {
-        String query = "UPDATE dbo.Users SET Email = '" + updateUser.getEmail() + "', Password = '" + updateUser.getPassword() +
-                       "' WHERE id =" + id;
-        return jdbcTemplate.update(query);
+    @Transactional(readOnly = true)
+    public List<UserPojo> getAllUsers() {
+        List<User> listOfUsers = entityManager.createQuery("SELECT user FROM User user", User.class).getResultList();
+
+        List<UserPojo> result = listOfUsers.stream().map(user -> converter.userToPojo(user)).collect(Collectors.toList());
+        return result;
     }
 
     @Override
-    public int deleteUser(long id) {
-        String query = "DELETE FROM dbo.USERS WHERE id = " + id;
-        return jdbcTemplate.update(query);
+    public UserPojo updateUser(User updateUser, long id) {
+        return null;
     }
 
     @Override
-    public void createTableUser() {
-        jdbcTemplate.execute("IF OBJECT_ID('dbo.Users', 'U') IS NOT NULL DROP TABLE dbo.Users");
-        jdbcTemplate.execute("CREATE TABLE Users(Id BIGINT, Email VARCHAR(30), Password VARCHAR(30))");
+    public UserPojo deleteUser(long id) {
+        return null;
     }
 }
