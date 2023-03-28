@@ -7,6 +7,7 @@ import todolist.domain.PlainObjects.TodoPojo;
 import todolist.domain.Tag;
 import todolist.domain.Todo;
 import todolist.domain.User;
+import todolist.exceptions.CustomEmptyDataException;
 import todolist.repositories.TodoRepository;
 import todolist.repositories.UserRepository;
 import todolist.services.interfaces.ITagService;
@@ -50,7 +51,7 @@ public class TodoService implements ITodoService {
             tags.stream().map(tag -> tagService.findOrCreate(tag)).collect(Collectors.toSet()).forEach(todo::addTag);
             return converter.todoToPojo(todo);
         } else {
-            return converter.todoToPojo(new Todo());
+            throw new CustomEmptyDataException("unable to get user for todo");
         }
     }
 
@@ -60,8 +61,9 @@ public class TodoService implements ITodoService {
         Optional<Todo> todoOptional = todoRepository.findById(id);
         if (todoOptional.isPresent()) {
             return converter.todoToPojo(todoOptional.get());
+        } else {
+            throw new NoSuchElementException("unable to get todo");
         }
-        return converter.todoToPojo(new Todo());
     }
 
     @Override
@@ -79,7 +81,7 @@ public class TodoService implements ITodoService {
             todoRepository.save(target);
             return converter.todoToPojo(target);
         } else {
-            return converter.todoToPojo(new Todo());
+            throw new NoSuchElementException("unable to update todo");
         }
     }
 
@@ -93,7 +95,7 @@ public class TodoService implements ITodoService {
             todoRepository.delete(todoForDelete);
             return "Todo with id: " + id + " was successfully removed";
         } else {
-            return "Todo with id: " + id + " wasn't not found";
+            throw new NoSuchElementException("unable to delete todo");
         }
     }
 
@@ -104,7 +106,7 @@ public class TodoService implements ITodoService {
         if (userOptional.isPresent()) {
             return todoRepository.findAllByUser(userOptional.get()).stream().map(todo -> converter.todoToPojo(todo)).collect(Collectors.toList());
         } else {
-            return new ArrayList<>();
+            throw new NoSuchElementException("No user with id: " + userId + " was found");
         }
     }
 }
