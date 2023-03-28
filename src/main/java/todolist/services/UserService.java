@@ -1,14 +1,17 @@
 package todolist.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import todolist.domain.PlainObjects.UserPojo;
 import todolist.domain.User;
+import todolist.exceptions.CustomEmptyDataException;
 import todolist.repositories.UserRepository;
 import todolist.services.interfaces.IUserService;
 import todolist.utils.Converter;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -35,11 +38,7 @@ public class UserService implements IUserService {
     @Transactional(readOnly = true)
     public UserPojo getUser(long id) {
         Optional<User> foundUserOptional = userRepository.findById(id);
-        if (foundUserOptional.isPresent()) {
-            return converter.userToPojo(foundUserOptional.get());
-        } else {
-            return converter.userToPojo(new User());
-        }
+        return converter.userToPojo(foundUserOptional.get());
     }
 
     @Override
@@ -60,7 +59,7 @@ public class UserService implements IUserService {
             userRepository.save(target);
             return converter.userToPojo(target);
         } else {
-            return converter.userToPojo(new User());
+            throw new CustomEmptyDataException("unable to update user");
         }
     }
 
@@ -72,7 +71,7 @@ public class UserService implements IUserService {
             userRepository.delete(userForDeleteOptional.get());
             return "User with id: " + id + " was successfully remover";
         } else {
-            return "User with id: " + id + " doesn't exist";
+            throw new CustomEmptyDataException("unable to delete user");
         }
     }
 }
