@@ -6,6 +6,7 @@
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context
@@ -15,11 +16,14 @@
        http://www.springframework.org/schema/tx
        http://www.springframework.org/schema/tx/spring-tx.xsd
        http://www.springframework.org/schema/data/jpa
-       https://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+       https://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+       http://www.springframework.org/schema/aop
+       https://www.springframework.org/schema/aop/spring-aop.xsd">
 
     <context:component-scan base-package="todolist"/>
     <mvc:annotation-driven/>
     <tx:annotation-driven transaction-manager="transactionManager"/>
+    <aop:aspectj-autoproxy/>
 
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"/>
 
@@ -46,6 +50,10 @@
         </property>
 
         <property name="packagesToScan" value="todolist.domain"/>
+    </bean>
+
+    <bean id="tokenManager" class="todolist.security.TokenManager">
+        <constructor-arg name="secretKey" value="SuperSecretKey"/>
     </bean>
 
     <jpa:repositories base-package="todolist.repositories"
