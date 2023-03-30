@@ -14,8 +14,6 @@ import todolist.services.interfaces.ITagService;
 import todolist.services.interfaces.ITodoService;
 import todolist.utils.Converter;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.*;
 import java.util.stream.Collectors;
 
