@@ -1,6 +1,5 @@
 package todolist.security;
 
-import java.util.Calendar;
 import java.util.Date;
 
 public class TokenManager {
@@ -13,8 +12,7 @@ public class TokenManager {
     public String createToken(TokenPayload payload) {
         String mixedPayload = createMixedTokenPayload(payload);
         String signature = createSignature(mixedPayload);
-        String token = String.format("%s#%s", mixedPayload, signature);
-        return token;
+        return String.format("%s#%s", mixedPayload, signature);
     }
 
     private String createMixedTokenPayload(TokenPayload payload) {
@@ -39,7 +37,6 @@ public class TokenManager {
         Long id = Long.valueOf(tokenParts[0]);
         String email = tokenParts[1];
         Date timeOfCreation = new Date(Long.valueOf(tokenParts[2]));
-        TokenPayload payload = new TokenPayload(id, email, timeOfCreation);
-        return payload;
+        return new TokenPayload(id, email, timeOfCreation);
     }
 }

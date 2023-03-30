@@ -1,7 +1,6 @@
 package todolist.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import todolist.domain.PlainObjects.UserPojo;
@@ -11,7 +10,6 @@ import todolist.repositories.UserRepository;
 import todolist.services.interfaces.IUserService;
 import todolist.utils.Converter;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
